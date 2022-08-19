@@ -1,9 +1,3 @@
----
-title: Shellability Stuff
-date created: Tuesday, August 16th 2022, 10:06:04 pm
-date modified: Wednesday, August 17th 2022, 12:12:59 am
----
-
 # Shellability Stuff
 
 The problem: our complex $C(n)$ for $S_n$ for $n$ even and $n \geq 6$ is not shellable, because its top-dimensional simplices (those corresponding to conjugates of $(12)(34)…((n-1)n)$), of dimension $k = (n/2)-1$ meet only at faces of dimension $k-2$ (they meet on faces corresponding to conjugates of $(56)(78)…((n-1)n)$, where they meet exactly two other such simplices - if the removed pair of transpositions is $(ab)(cd)$, then the simplex meets there those simplices with it replaced by $(ac)(bd)$ and $(ad)(bc)$ - every other intersection is contained in one of these), not $k - 1$.
