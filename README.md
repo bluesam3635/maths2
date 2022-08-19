@@ -1,329 +1,36 @@
-# minima
+# Shellability Stuff
 
-*Minima is a one-size-fits-all Jekyll theme for writers*. It's Jekyll's default (and first) theme. It's what you get when you run `jekyll new`.
+The problem: our complex $C(n)$ for $S_n$ for $n$ even and $n \geq 6$ is not shellable, because its top-dimensional simplices (those corresponding to conjugates of $(12)(34)…((n-1)n)$), of dimension $k = (n/2)-1$ meet only at faces of dimension $k-2$ (they meet on faces corresponding to conjugates of $(56)(78)…((n-1)n)$, where they meet exactly two other such simplices - if the removed pair of transpositions is $(ab)(cd)$, then the simplex meets there those simplices with it replaced by $(ac)(bd)$ and $(ad)(bc)$ - every other intersection is contained in one of these), not $k - 1$.
 
-***Disclaimer:** The information here may vary depending on the version you're using. Please refer to the `README.md` bundled
-within the theme-gem for information specific to your version or by pointing your browser to the Git tag corresponding to your
-version. e.g. https://github.com/jekyll/minima/blob/v2.5.0/README.md*
-*Running `bundle show minima` will provide you with the local path to your current theme version.*
+Idea for solution:
 
+Let $C$ be any connected $n$-dimensional pure complex whose maximal simplices meet only at $n - 2$ dimensional faces (in the sense that for any two maximal simplices, the intersection is either empty or $n - 2$ dimensional). Let $\tilde{C}$ be the complex formed by retracting each simplex of $C$ orthogonally away from one of its maximal faces. Then $C$ and $\tilde{C}$ are homotopy equivalent (indeed, $\tilde{C}$ is a deformation retract of $C$), and the ($n-1$ dimensional) maximal simplices of $\tilde{C}$ (of which there are $n$ for each maximal simplex of $C$) meet only at $n-2$ dimensional faces (the same meetings as in $C$, plus the $n - 2$ dimensional faces of each simplex), so might be shellable.
 
-[Theme preview](https://jekyll.github.io/minima/)
+Questions:
 
-![minima theme preview](/screenshot.png)
+1. Is this *always* shellable?
+2. If not, can we find some nice conditions for when it is shellable?
+3. If not, can we find some argument using the extra structure that we have in our case to show that the ones that we care about are shellable?
 
-## Installation
+Attempting to answer those:
 
-Add this line to your Jekyll site's Gemfile:
+1. Let's just try it:  
+   We can construct our shelling in essentially two stages - once we get inside a maximal simplex of $C$, we will add all of its faces (that are in $\tilde{C}$), and when we move between them, we will pick one $n-2$-dimensional maximal intersection, and one maximal simplex of $C$ that we have not yet visited, and attempt to add all of its simplices. Let's say we start in some maximal simplex $S$ of $C$. Then the simplices of $\tilde{C}$ here are exactly the $n$ maximal faces of $S$. These are $n - 1$ dimensional, and every one of them meets every other one at an $n - 2$ dimensional face, so we can add them in any order. None of them are homology facets.  
+   When adding a new maximal simplex of $C$, say $T$, we always choose $T$ to be connected to the complex of simplices that we have already added (which we shall call, for now, $D$) at some $n-2$ dimensional face $F$ (and maybe also some other places) - we can do this, as $C$, and hence $\tilde{C}$, is connected. That leaves three cases, based on the number $k$ of vertices of $T$ that already belong to $D$. There are at least $n - 1$ (as $T$ intersects $D$ at an $n - 2$ dimensional face), at at most $n + 1$ (as $T$ has $n + 1$ vertices).
+	1. If $k = n - 1$, then there are two vertices $v$ and $w$ of $T$ which have not been added to $D$ yet. As only one maximal face of $T$ has been removed in $\tilde{C}$, at least one of $T \setminus \{v\}$ and $T \setminus \{w\}$ is a simplex of $\tilde{C}$, and its intersection with $D$ is pure and $n - 2$ dimensional, so we may add that simplex to our shelling, and then proceed to add every other maximal face of $T$ that is in $\tilde{C}$ as above (each intersects $D$ only at the face we just added and the internal $n-2$ dimensional intersections of each maximal face of $T$ with each other). None of them are homology facets.
+	2. If $k = n$, then there is only one vertex $v$ of $T$ which has not yet been added to $D$, and one vertex $w$ which has. If $T \setminus\{v\}$ is in $\tilde{C}$, then we proceed as above. If not, then since $w$ has been added to $D$, it must have been added as part of some simplex $U$ of $C$, all of whose maximal faces (that are in $\tilde{C}$) we added, because that's the only way that we ever add anything to $D$. Since that simplex intersects $T$ (at $w$), it must intersect at an $n - 2$ dimensional face $G$. The other $n - 2$ vertices of $G$ must all lie in $F$, so that $G \setminus \{w\} = F \setminus \{u\}$ for some $u \in F$. Consider the simplex $U = G \cup \{u\} = F \cup \{w\} = T \setminus \{v\}$, which intersects $D$ at least at $G$ and $F$. Now consider any $k$-dimensional face $H$ of $U$ for $k < n - 2$ . If $H$ is in $D$, then it must have been added as part of some $n - 2$ dimensional intersection with $T$, which cannot contain $v$ (as $v$ has not yet been added), so must be contained in $U$. Thus, the intersection of $U$ with $D$ is pure and $n-2$-dimensional, so we may add it to $D$. We may then add all other maximal faces of $T$ contained in $\tilde{C}$ as above.
+	3. If $k = n + 1$, choose one vertex $v$ of $T$ not contained in $F$ (of which there are two) such that $F \cup \{v\}$ is not the maximal face that we deleted from $T$ in forming $\tilde{C}$ (of which there is at least one, as we deleted only one such face). Let $w$ be the other vertex of $T$ not contained in $F$. As $v$ has been added to $D$, it must have been added as part of a simplex of $C$ whose maximal faces were all added, and which intersects $T$, and therefore must intersect $T$ at some $n-2$ dimensional face $G$. Then we again have two cases:
+		1. If $G$ contains $w$, then consider all other possible choices for $G$. If all fail, skip adding $T$ via $F$ for now.
+		2. If $G$ does not contain $w$, then $G = (F \setminus \{u\}) \cup \{v\}$ for some $u \in F$, and so we may add the simplex $U = G \cup \{u\} = F \cup \{v\} = T \setminus \{w\}$. If there is no maximal simplex $H$ of $D \cap U$ of dimension $k < n - 2$, then we may add $H$, and subsequently every other simplex of $\tilde{C}$ contained in $D$ (as $w$ has been added, it was added in something that intersects $T$ at a $k - 2$ dimensional face $J$, so the intersection of $U$ with $D$ is pure and $n-2$ dimensional). If there is such a maximal simplex, then since $H$ is in $D$, it must have been added as part of a $k - 2$ dimensional intersection $I$ with $T$, which cannot be contained in $U$ (else $H$ would not be maximal). Thus, we must have $I = H \cup \{w\}$, and $H$ must have dimension $n - 3$. We thus cannot add $U$. We now go back to the start of the $k = n + 1$ case and try a different choice of $G$. If all choices fail, we skip adding $T$ via $F$ for now.  
+	After following the above procedure as far as we can, either we have a full shelling of $\tilde{C}$, or we have a partial shelling $D$ of $\tilde{C}$, together with a collection of simplices of $C$ which have fallen into one of the two failure cases in case 3 above for all approaches. We shall now consider these latter simplices, or rather their $n-2$ dimensional faces which are in $\tilde{C}$.  
+	Let $T$ be such a simplex, and let $U$ be its $n-1$ dimensional face which lies in $\tilde{C}$ with the highest number $j$ of $n - 2$ dimensional faces in its intersection with $D$ (breaking ties arbitrarily). We now take cases with $j(T)$, and will add our simplices in descending order of $j(T)$, which we shall recalculate after adding each simplex:
+	1. If $j(T) = n$, then all proper faces of $U$ have already been added, so $U$ can be added to our shelling as a homology facet, and subsequently all other maximal faces of $T$ in $\tilde{C}$ as above (not necessarily as homology facets).
+	2. If $j(T) = n - 1$, then the only proper face of $U$ not contained in $D$ is the unique maximal face $G$ of $U$ not contained in $D$: if $F$ is another such, it either is $n-2$ dimensional (but then it would be contained in $D$), or it is contained in something $n-2$ dimensional other than $U$ (so would be contained in D). The intersection of $U$ with $D$ is therefore pure and $n-2$ dimensional, so we may add $U$ to $D$, followed by all other maximal faces of $T$ in $\tilde{C}$.
+	3. If $j(T) \leq n - 2$, then problems can arise - the minimal example has $n = 3$, where exactly one pair of non-adjacent edges has already been added to $D$ - in this case, every face of $T$ intersects $D$ at one edge and the opposite vertex, so none can be added. 
 
-```ruby
-gem "minima"
-```
-
-And then execute:
-
-    $ bundle
-
-
-## Contents At-A-Glance
-
-Minima has been scaffolded by the `jekyll new-theme` command and therefore has all the necessary files and directories to have a new Jekyll site up and running with zero-configuration.
-
-### Layouts
-
-Refers to files within the `_layouts` directory, that define the markup for your theme.
-
-  - `default.html` &mdash; The base layout that lays the foundation for subsequent layouts. The derived layouts inject their contents into this file at the line that says ` {{ content }} ` and are linked to this file via [FrontMatter](https://jekyllrb.com/docs/frontmatter/) declaration `layout: default`.
-  - `home.html` &mdash; The layout for your landing-page / home-page / index-page. [[More Info.](#home-layout)]
-  - `page.html` &mdash; The layout for your documents that contain FrontMatter, but are not posts.
-  - `post.html` &mdash; The layout for your posts.
-
-#### Home Layout
-
-`home.html` is a flexible HTML layout for the site's landing-page / home-page / index-page. <br/>
-
-##### *Main Heading and Content-injection*
-
-From Minima v2.2 onwards, the *home* layout will inject all content from your `index.md` / `index.html` **before** the **`Posts`** heading. This will allow you to include non-posts related content to be published on the landing page under a dedicated heading. *We recommended that you title this section with a Heading2 (`##`)*.
-
-Usually the `site.title` itself would suffice as the implicit 'main-title' for a landing-page. But, if your landing-page would like a heading to be explicitly displayed, then simply define a `title` variable in the document's front matter and it will be rendered with an `<h1>` tag.
-
-##### *Post Listing*
-
-This section is optional from Minima v2.2 onwards.<br/>
-It will be automatically included only when your site contains one or more valid posts or drafts (if the site is configured to `show_drafts`).
-
-The title for this section is `Posts` by default and rendered with an `<h2>` tag. You can customize this heading by defining a `list_title` variable in the document's front matter.
+Thus, problems can only arise if every remaining maximal simplex has $j(T) \leq n - 2$. But there are further restrictions on these cases. For the next section, we'll assume that $j(T) \leq n - 2$. This places quite strict bounds on the number of $n-2$ dimensional faces of $T$ that can intersect with $D$ - in fact, at least $n + 1$ faces must not be included (there are at most $j(T)$ that are missing each vertex, and there are $n + 1$ vertices, but each misses two vertices, so this gives a maximum of $(n + 1)j(T)/2$ such faces included, out of a total of $n(n+1)/2 = (n^2 + n)/2$, so we miss at least $(n^{2}+ n - (n+1)j(T)/2$ faces. Since $j(T) \leq n - 2$, that's at least $(n^2+ n - (n+1)(n-2))/2=n+1$).
 
 
-### Includes
-
-Refers to snippets of code within the `_includes` directory that can be inserted in multiple layouts (and another include-file as well) within the same theme-gem.
-
-  - `disqus_comments.html` &mdash; Code to markup disqus comment box.
-  - `footer.html` &mdash; Defines the site's footer section.
-  - `google-analytics.html` &mdash; Inserts Google Analytics module (active only in production environment).
-  - `head.html` &mdash; Code-block that defines the `<head></head>` in *default* layout.
-  - `custom-head.html` &mdash; Placeholder to allow users to add more metadata to `<head />`.
-  - `header.html` &mdash; Defines the site's main header section. By default, pages with a defined `title` attribute will have links displayed here.
-  - `social.html` &mdash; Renders social-media icons based on the `minima:social_links` data in the config file.
-
-
-### Sass
-
-Refers to `.scss` files within the `_sass` directory that define the theme's styles.
-
-  - `minima/skins/classic.scss` &mdash; The "classic" skin of the theme. *Used by default.*
-  - `minima/initialize.scss` &mdash; A component that defines the theme's *skin-agnostic* variable defaults and sass partials.
-    It imports the following components (in the following order):
-    - `minima/custom-variables.scss` &mdash; A hook that allows overriding variable defaults and mixins. (*Note: Cannot override styles*)
-    - `minima/_base.scss` &mdash; Sass partial for resets and defines base styles for various HTML elements.
-    - `minima/_layout.scss` &mdash; Sass partial that defines the visual style for various layouts.
-    - `minima/custom-styles.scss` &mdash; A hook that allows overriding styles defined above. (*Note: Cannot override variables*)
-
-Refer the [skins](#skins) section for more details.
-
-
-### Assets
-
-Refers to various asset files within the `assets` directory.
-
-  - `assets/css/style.scss` &mdash; Imports sass files from within the `_sass` directory and gets processed into the theme's
-    stylesheet: `assets/css/styles.css`.
-  - `assets/minima-social-icons.svg` &mdash; A composite SVG file comprised of *symbols* related to various social-media icons.
-    This file is used as-is without any processing. Refer [section on social networks](#social-networks) for its usage.
-
-
-### Plugins
-
-Minima comes with [`jekyll-seo-tag`](https://github.com/jekyll/jekyll-seo-tag) plugin preinstalled to make sure your website gets the most useful meta tags. See [usage](https://github.com/jekyll/jekyll-seo-tag#usage) to know how to set it up.
-
-
-## Usage
-
-Have the following line in your config file:
-
-```yaml
-theme: minima
-```
-
-
-### Customizing templates
-
-To override the default structure and style of minima, simply create the concerned directory at the root of your site, copy the file you wish to customize to that directory, and then edit the file.
-e.g., to override the [`_includes/head.html `](_includes/head.html) file to specify a custom style path, create an `_includes` directory, copy `_includes/head.html` from minima gem folder to `<yoursite>/_includes` and start editing that file.
-
-The site's default CSS has now moved to a new place within the gem itself, [`assets/css/style.scss`](assets/css/style.scss).
-
-In Minima 3.0, if you only need to customize the colors of the theme, refer to the subsequent section on skins. To have your
-*CSS overrides* in sync with upstream changes released in future versions, you can collect all your overrides for the Sass
-variables and mixins inside a sass file placed at `_sass/minima/custom-variables.scss` and all other overrides inside a sass file
-placed at path `_sass/minima/custom-styles.scss`.
-
-You need not maintain entire partial(s) at the site's source just to override a few styles. However, your stylesheet's primary
-source (`assets/css/style.scss`) should contain the following:
-
-  - Front matter dashes at the very beginning (can be empty).
-  - Directive to import a skin.
-  - Directive to import the base styles (automatically loads overrides when available).
-
-Therefore, your `assets/css/style.scss` should contain the following at minimum:
-
-```sass
----
 ---
 
-@import
-  "minima/skins/{{ site.minima.skin | default: 'classic' }}",
-  "minima/initialize";
-```
-
-#### Skins
-
-Minima 3.0 supports defining and switching between multiple color-palettes (or *skins*).
-
-```
-.
-├── minima.scss
-└── minima
-    └── _syntax-highlighting.scss
-```
-
-
-A skin is a Sass file placed in the directory `_sass/minima/skins` and it defines the variable defaults related to the "color"
-aspect of the theme. It also embeds the Sass rules related to syntax-highlighting since that is primarily related to color and
-has to be adjusted in harmony with the current skin.
-
-The default color palette for Minima is defined within `_sass/minima/skins/classic.scss`. To switch to another available skin,
-simply declare it in the site's config file. For example, to activate `_sass/minima/skins/dark.scss` as the skin, the setting
-would be:
-
-```yaml
-minima:
-  skin: dark
-```
-
-As part of the migration to support skins, some existing Sass variables have been retired and some **have been redefined** as
-summarized in the following table:
-
-Minima 2.0      | Minima 3.0
---------------- | ----------
-`$brand-color`  | `$link-base-color`
-`$grey-*`       | `$brand-*`
-`$orange-color` | *has been removed*
-
-##### Available skins
-
-Skin setting    | Description
---------------- | -----------
-classic         | Default, light color scheme.
-dark            | Dark variant of the classic skin.
-solarized       | *Adaptive skin* for [solarized](https://github.com/solarized) color scheme skins.
-solarized-light | Light variant of solarized color scheme.
-solarized-dark  | Dark variant of solarized color scheme.
-
-*:bulb: Adaptive skins switch between the "light" and "dark" variants based on the user's operating system setting or browser setting
-(via CSS Media Query [prefers-color-scheme](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme)).*
-
-### Customize navigation links
-
-This allows you to set which pages you want to appear in the navigation area and configure order of the links.
-
-For instance, to only link to the `about` and the `portfolio` page, add the following to your `_config.yml`:
-
-```yaml
-header_pages:
-  - about.md
-  - portfolio.md
-```
-
-
-### Change default date format
-
-You can change the default date format by specifying `site.minima.date_format`
-in `_config.yml`.
-
-```
-# Minima date format
-# refer to http://shopify.github.io/liquid/filters/date/ if you want to customize this
-minima:
-  date_format: "%b %-d, %Y"
-```
-
-
-### Extending the `<head />`
-
-You can *add* custom metadata to the `<head />` of your layouts by creating a file `_includes/custom-head.html` in your source directory. For example, to add favicons:
-
-1. Head over to [https://realfavicongenerator.net/](https://realfavicongenerator.net/) to add your own favicons.
-2. [Customize](#customization) default `_includes/custom-head.html` in your source directory and insert the given code snippet.
-
-
-### Enabling comments (via Disqus)
-
-Optionally, if you have a Disqus account, you can tell Jekyll to use it to show a comments section below each post.
-
-:warning: `url`, e.g. `https://example.com`, must be set in you config file for Disqus to work.
-
-To enable it, after setting the url field, you also need to add the following lines to your Jekyll site:
-
-```yaml
-  disqus:
-    shortname: my_disqus_shortname
-```
-
-You can find out more about Disqus' shortnames [here](https://help.disqus.com/installation/whats-a-shortname).
-
-Comments are enabled by default and will only appear in production, i.e., `JEKYLL_ENV=production`
-
-If you don't want to display comments for a particular post you can disable them by adding `comments: false` to that post's YAML Front Matter.
-
-### Author Metadata
-
-From `Minima-3.0` onwards, `site.author` is expected to be a mapping of attributes instead of a simple scalar value:
-
-```yaml
-author:
-  name: John Smith
-  email: "john.smith@foobar.com"
-```
-
-To migrate existing metadata, update your config file and any reference to the object in your layouts and includes as summarized below:
-
-Minima 2.x    | Minima 3.0
-------------- | -------------------
-`site.author` | `site.author.name`
-`site.email`  | `site.author.email`
-
-
-### Social networks
-
-You can add links to the accounts you have on other sites, with respective icon, by adding one or more of the following options in your config.
-From `Minima-3.0` onwards, the usernames are to be nested under `minima.social_links`, with the keys being simply the social-network's name:
-
-```yaml
-minima:
-  social_links:
-    twitter: jekyllrb
-    github: jekyll
-    stackoverflow: "11111"
-    dribbble: jekyll
-    facebook: jekyll
-    flickr: jekyll
-    instagram: jekyll
-    linkedin: jekyll
-    pinterest: jekyll
-    telegram: jekyll
-    microdotblog: jekyll
-    keybase: jekyll
-
-    mastodon:
-     - username: jekyll
-       instance: example.com
-     - username: jekyll2
-       instance: example.com
-
-    gitlab:
-     - username: jekyll
-       instance: example.com
-     - username: jekyll2
-       instance: example.com
-
-    youtube: jekyll
-    youtube_channel: UC8CXR0-3I70i1tfPg1PAE1g
-    youtube_channel_name: CloudCannon
-```
-
-
-### Enabling Google Analytics
-
-To enable Google Analytics, add the following lines to your Jekyll site:
-
-```yaml
-  google_analytics: UA-NNNNNNNN-N
-```
-
-Google Analytics will only appear in production, i.e., `JEKYLL_ENV=production`
-
-### Enabling Excerpts on the Home Page
-
-To display post-excerpts on the Home Page, simply add the following to your `_config.yml`:
-
-```yaml
-show_excerpts: true
-```
-
-
-## Contributing
-
-Bug reports and pull requests are welcome on GitHub at https://github.com/jekyll/minima. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
-
-## Development
-
-To set up your environment to develop this theme, run `script/bootstrap`.
-
-To test your theme, run `script/server` (or `bundle exec jekyll serve`) and open your browser at `http://localhost:4000`. This starts a Jekyll server using your theme and the contents. As you make modifications, your site will regenerate and you should see the changes in the browser after a refresh.
-
-## License
-
-The theme is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
+And that's about as far as I've got so far - I'm not sure if the problem cases ever actually come up in our case, and if they do, if there's a way around it by adding things in a clever order - that's the next thing to check. It seems likely that it is avoidable - the conditions for it to go wrong seem fairly specific (you'd need a collection of simplices such that for each simplex in the collection, $n + 1$ of its codimension 2 faces only meet other simplices in the collection, and they have to be distributed in exactly the wrong way around every simplex). 
